@@ -13,7 +13,7 @@ class MyRobot(wpilib.TimedRobot):
             should be used for any initialization code.
             """
             # Xbox Joystick Controller
-            self.Xbox = wpilib.XboxController(0)
+            self.stick = wpilib.joystick(0)
             # Rev through CAN(lift)
             self.left_lift = rev.CANSparkMax(10, rev.MotorType.kBrushless)
             self.right_lift = rev.CANSparkMax(11, rev.MotorType.kBrushless)
@@ -33,8 +33,8 @@ class MyRobot(wpilib.TimedRobot):
             self.left_lift.set(0)  # Stop robot
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
-        self.Xbox.set(getX(hand=<Hand.kRight: 1>))
-        self.Xbox.set(getY(hand=<Hand.kLeft: 1>))
+        self.right_lift.set(joystick.getY())
+        self.left_lift.set(joystick.getY())
 
 
 if __name__ == "__main__":
