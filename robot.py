@@ -11,11 +11,11 @@
 """
 
 import wpilib
+import ctre
 import wpilib.drive
 import rev
 from wpilib.interfaces import GenericHID
 Hand = GenericHID.Hand
-
 
 
 
@@ -28,12 +28,12 @@ class MyRobot(wpilib.TimedRobot):
         """
 
         # Left motor 
-        self.frontleft_motor = wpilib.Victor(0)
-        self.backleft_motor = wpilib.Victor(1) 
+        self.frontleft_motor = ctre.WPI_TalonSRX(0)
+        self.backleft_motor = ctre.WPI_TalonSRX(1) 
         self.leftdrive = wpilib.SpeedControllerGroup(self.frontleft_motor, self.backleft_motor)
         # Right motor
-        self.frontright_motor = wpilib.Victor(2)
-        self.backright_motor = wpilib.Victor(3)
+        self.frontright_motor = ctre.WPI_TalonSRX(2)
+        self.backright_motor = ctre.WPI_TalonSRX(3)
         self.rightdrive = wpilib.SpeedControllerGroup(self.frontright_motor, self.backright_motor)
         # Drive - combining left + right
         self.drive = wpilib.drive.DifferentialDrive(self.leftdrive, self.rightdrive)
@@ -41,10 +41,12 @@ class MyRobot(wpilib.TimedRobot):
          # Elevator Rev through CAN(lift)+
         self.eleLeft = rev.CANSparkMax(10, rev.MotorType.kBrushless)
         self.eleRight = rev.CANSparkMax(11, rev.MotorType.kBrushless)
+        self.climber = rev.CANSparkMax(12, rev.MotorType.kBrushless)
+        # self.eleRight.Follow(self.eleLeft)
     
         # intake motors
-        self.left_motor = wpilib.Victor(6)
-        self.right_motor = wpilib.Victor(7)
+        self.left_motor = ctre.Victor(6)
+        self.right_motor = ctre.Victor(7)
        
         # intake stick & timer
          # elevator timer
@@ -98,9 +100,7 @@ class MyRobot(wpilib.TimedRobot):
         self.drive.arcadeDrive(.5*(self.stick.getY(Hand.kRight)), (.5*(self.stick.getX(Hand.kRight))))
         
         # elevator
-        self.eleLeft.set(.5*(self.stick.getY(Hand.kLeft)))
-        self.eleRight.set(.5*(self.stick.getY(Hand.kRight)))
-
+        self.eleLeft.set(self.stick.getY(Hand.kLeft))
     
 
 if __name__ == "__main__":
