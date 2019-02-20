@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+# THIS IS THE ULTIMATE MASTER CODE
 # DRIVE BASE
 # ELEVATOR
 # INTAKE
@@ -45,8 +45,8 @@ class MyRobot(wpilib.TimedRobot):
         # self.eleRight.Follow(self.eleLeft)
     
         # intake motors
-        self.left_motor = ctre.Victor(6)
-        self.right_motor = ctre.Victor(7)
+        self.left_motor = ctre.WPI_VictorSPX(6)
+        self.right_motor = ctre.WPI_VictorSPX(7)
        
         # intake stick & timer
          # elevator timer
@@ -54,8 +54,10 @@ class MyRobot(wpilib.TimedRobot):
          # pneumatics joystick
         self.stick = wpilib.XboxController(0)        
         # pneumatics solenoids
-        self.pinion = wpilib.DoubleSolenoid(0,1)
+        self.hatchcover = wpilib.DoubleSolenoid(0,1)
         self.doubleSolenoid = wpilib.DoubleSolenoid(2,3)
+        self.stick2 = wpilib.XboxController(1)
+        
 
         # wpilib.CameraServer.launch()
 
@@ -76,15 +78,14 @@ class MyRobot(wpilib.TimedRobot):
 
     def teleopPeriodic(self):
         """This function is called periodically during operator control."""
-      # pneu DriveTrain
-        self.drive.arcadeDrive(self.stick.getY(), self.stick.getX())
+        
         # Pneumatics
-        if (self.stick.getRawButton(2) == (1)):
-            self.pinion.set(1)
-        elif (self.stick.getRawButton(3)):
-            self.pinion.set(2)
+        if (self.stick2.getRawButton(2) == (1)):
+            self.hatchcover.set(1)
+        elif (self.stick2.getRawButton(3)):
+            self.hatchcover.set(2)
         else:
-             self.pinion.set(0)
+             self.hatchcover.set(0)
         if (self.stick.getRawButton(4) == (1)):
             self.doubleSolenoid.set(1)
         elif (self.stick.getRawButton(1)):
@@ -93,14 +94,18 @@ class MyRobot(wpilib.TimedRobot):
              self.doubleSolenoid.set(0)
 
         # intake motor command
-        self.left_motor.set((self.stick.getY()))
-        self.right_motor.set((self.stick.getY()))
+        self.left_motor.set((self.stick.getY(Hand.kLeft)))
+        self.right_motor.set((self.stick.getY(Hand.kLeft)))
 
         # drive motors 
-        self.drive.arcadeDrive(.5*(self.stick.getY(Hand.kRight)), (.5*(self.stick.getX(Hand.kRight))))
+        self.drive.arcadeDrive(-1*(self.stick.getY(Hand.kRight)), (-1*(self.stick.getX(Hand.kRight))))
         
         # elevator
-        self.eleLeft.set(self.stick.getY(Hand.kLeft))
+        self.eleLeft.set(-1*(self.stick2.getY(Hand.kLeft)))
+        self.eleRight.set(-1*(self.stick2.getY(Hand.kLeft)))
+
+        # note: Xbox controller 1 controlls the drive base and stablizing/rising pneu. and intake
+        # note: Xbox controller 2 controlls the elevator and hatchcover thing
     
 
 if __name__ == "__main__":
