@@ -17,6 +17,7 @@ import rev
 from wpilib.interfaces import GenericHID
 Hand = GenericHID.Hand
 
+from networktables import NetworkTables
 
 
 class MyRobot(wpilib.TimedRobot):
@@ -58,8 +59,16 @@ class MyRobot(wpilib.TimedRobot):
         self.doubleSolenoid = wpilib.DoubleSolenoid(2,3)
         self.stick2 = wpilib.XboxController(1)
         
+        # Construct Camera
+        wpilib.CameraServer.launch()
 
-        # wpilib.CameraServer.launch()
+        #Put items on Shuffleboard
+        self.sd.putNumber('driveLimit', .5)
+        self.sd.putNumber('liftLimit', .4)
+
+        #Get items from Shuffeboard
+        self.liftLimit = self.sd.getNumber('liftLimit')
+        self.driveLimit = self.sd.getNumber('driveLimit')
 
     def autonomousInit(self):
         """This function is run once each time the robot enters autonomous mode."""
@@ -98,11 +107,11 @@ class MyRobot(wpilib.TimedRobot):
         self.right_motor.set((self.stick.getY(Hand.kLeft)))
 
         # drive motors 
-        self.drive.arcadeDrive(-1*(self.stick.getY(Hand.kRight)), (-1*(self.stick.getX(Hand.kRight))))
+        self.drive.arcadeDrive(self.driveLimit*-1*(self.stick.getY(Hand.kRight)), (self.driveLimit*-1*(self.stick.getX(Hand.kRight))))
         
         # elevator
-        self.eleLeft.set(-1*(self.stick2.getY(Hand.kLeft)))
-        self.eleRight.set(-1*(self.stick2.getY(Hand.kLeft)))
+        self.eleLeft.set(self.liftLimit*-1*(self.stick2.getY(Hand.kLeft)))
+        self.eleRight.set(self.liftLimit*-1*(self.stick2.getY(Hand.kLeft)))
 
         # note: Xbox controller 1 controlls the drive base and stablizing/rising pneu. and intake
         # note: Xbox controller 2 controlls the elevator and hatchcover thing
