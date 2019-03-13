@@ -53,7 +53,9 @@ class MyRobot(wpilib.TimedRobot):
          # elevator timer
         self.timer = wpilib.Timer()
          # pneumatics joystick
-        self.stick = wpilib.XboxController(0)        
+        self.stick = wpilib.XboxController(0)
+        #construct Shuffleboard
+        self.sd = NetworkTables.getTable('SmartDashboard')        
         # pneumatics solenoids
         self.hatchcover = wpilib.DoubleSolenoid(0,1)
         self.doubleSolenoid = wpilib.DoubleSolenoid(2,3)
@@ -62,13 +64,17 @@ class MyRobot(wpilib.TimedRobot):
         # Construct Camera
         wpilib.CameraServer.launch()
 
+        #construct Shuffleboard
+        self.sd = NetworkTables.getTable('SmartDashboard')
+
         #Put items on Shuffleboard
         self.sd.putNumber('driveLimit', .5)
         self.sd.putNumber('liftLimit', .4)
 
+
         #Get items from Shuffeboard
-        self.liftLimit = self.sd.getNumber('liftLimit')
-        self.driveLimit = self.sd.getNumber('driveLimit')
+        self.liftLimit = self.sd.getNumber('liftLimit',.5)
+        self.driveLimit = self.sd.getNumber('driveLimit',.5)
 
     def autonomousInit(self):
         """This function is run once each time the robot enters autonomous mode."""
@@ -107,11 +113,11 @@ class MyRobot(wpilib.TimedRobot):
         self.right_motor.set((self.stick.getY(Hand.kLeft)))
 
         # drive motors 
-        self.drive.arcadeDrive(self.driveLimit*-1*(self.stick.getY(Hand.kRight)), (self.driveLimit*-1*(self.stick.getX(Hand.kRight))))
+        self.drive.arcadeDrive(-1*(self.stick.getY(Hand.kRight)), (1*(self.stick.getX(Hand.kRight))))
         
         # elevator
-        self.eleLeft.set(self.liftLimit*-1*(self.stick2.getY(Hand.kLeft)))
-        self.eleRight.set(self.liftLimit*-1*(self.stick2.getY(Hand.kLeft)))
+        self.eleLeft.set(-1*(self.stick2.getY(Hand.kLeft)))
+        self.eleRight.set(-1*(self.stick2.getY(Hand.kLeft)))
 
         # note: Xbox controller 1 controlls the drive base and stablizing/rising pneu. and intake
         # note: Xbox controller 2 controlls the elevator and hatchcover thing
