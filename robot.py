@@ -43,7 +43,7 @@ class MyRobot(wpilib.TimedRobot):
         self.eleLeft = rev.CANSparkMax(10, rev.MotorType.kBrushless)
         self.eleRight = rev.CANSparkMax(11, rev.MotorType.kBrushless)
         #self.climber = rev.CANSparkMax(12, rev.MotorType.kBrushless)
-        # self.eleRight.Follow(self.eleLeft)
+        self.eleRight.follow(self.eleLeft, invert = True)
 
         # Thor's Stabilizer
         self.StaLeft = rev.CANSparkMax(12, rev.MotorType.kBrushless)
@@ -78,11 +78,12 @@ class MyRobot(wpilib.TimedRobot):
         
         self.sd.putNumber('liftLimit', .4)
         self.sd.putBoolean('LiftLimit', 0)
+        self.sd.putNumber('Drive Limit', .5)
         
 
 
         #Get items from Shuffeboard
-        self.driveLimit = self.sd.getNumber('driveLimit',.5)
+        self.driveLimit = self.sd.getNumber('Drive Limit',.5)
 
         # Rip auto
         self.autonomousInit = self.teleopInit
@@ -135,7 +136,7 @@ class MyRobot(wpilib.TimedRobot):
         
         # elevator
         self.eleLeft.set((self.stick2.getY(Hand.kLeft)))
-        self.eleRight.set(-1*(self.stick2.getY(Hand.kLeft)))
+        #self.eleRight.set((self.stick2.getY(Hand.kLeft)))
         #
         self.intake_angle.set(self.stick2.getY(Hand.kRight))
         #Thor 
